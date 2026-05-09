@@ -1,0 +1,27 @@
+# Matrix OS — kiểm thử đa hệ điều hành
+name: Java CI Matrix
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Verify
+        run: mvn -B clean verify
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-${{ matrix.os }}
+          path: target/*.jar
